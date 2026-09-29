@@ -1,5 +1,9 @@
 # 部署指南（Cloudflare Pages）
 
+> ✅ **已上线：https://personal-portfolio-site-6zc.pages.dev** （生产分支 main，2026-09-29 首次部署）
+> 仓库：https://github.com/lilmoon1314-cpu/personal_portfolio_site
+> 更新流程：改内容 → `npm run build` → `npx wrangler pages deploy out --project-name=personal-portfolio-site --branch=main`
+
 站点已配置为 Next.js 静态导出（`output: "export"`），构建产物在 `out/`，可部署到任何静态托管。
 
 ## 方式 A：Cloudflare Dashboard + Git（推荐，后续 push 自动部署）
