@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #07070c;
+  --bg-soft: #0c0d14;
+  --text: #e8eaf0;
+  --text-dim: #9aa3b2;
+  --text-faint: #6b7280;
+  --line: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.04);
+  --cyan: #22d3ee;
+  --violet: #a78bfa;
+  --grad: linear-gradient(120deg, #22d3ee, #818cf8 55%, #a78bfa);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-ink: var(--text);
+  --color-dim: var(--text-dim);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.25);
+}
+
+/* ── 背景网格与光晕 ── */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(34, 211, 238, 0.13), transparent 60%),
+    radial-gradient(800px 480px at 88% 12%, rgba(167, 139, 250, 0.11), transparent 60%),
+    radial-gradient(700px 700px at 50% 118%, rgba(129, 140, 248, 0.08), transparent 60%),
+    var(--bg);
+}
+.grid-lines {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 78%);
+  pointer-events: none;
+}
+
+/* ── 通用 ── */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+}
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.section-label {
+  font-size: 12px;
+  letter-spacing: 0.35em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+/* ── 卡片光斑 + 3D ── */
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: box-shadow 0.35s ease;
+}
+.card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--card-accent, #22d3ee) 16%, transparent),
+    transparent 65%
+  );
+}
+.tilt-card:hover .card-glow {
+  opacity: 1;
+}
+.tilt-card:hover {
+  box-shadow: 0 24px 70px -28px color-mix(in srgb, var(--card-accent, #22d3ee) 34%, transparent);
+}
+
+/* ── 顶部导航 ── */
+.nav-shell {
+  transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s;
+}
+.nav-shell.scrolled {
+  background: rgba(9, 10, 16, 0.72);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── 详情页 ── */
+.detail-hero-band {
+  background:
+    radial-gradient(1000px 400px at 20% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ── 动画 ── */
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -22px, 0) scale(1.05); }
+}
+.orb {
+  animation: float-slow 9s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer-line {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .orb, .shimmer-line { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
 }
